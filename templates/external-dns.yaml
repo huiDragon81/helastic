@@ -2,11 +2,13 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: external-dns-{{ .Values.namespace.name }}
+  namespace: {{ .Values.namespace.name }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: external-dns-{{ .Values.namespace.name }}
+  namespace: {{ .Values.namespace.name }}
 rules:
 - apiGroups: [""]
   resources: ["services","endpoints","pods"]
@@ -25,6 +27,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: external-dns-viewer-{{ .Values.namespace.name }}
+  namespace: {{ .Values.namespace.name }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -47,6 +50,7 @@ spec:
       app: external-dns-{{ .Values.namespace.name }}
   template:
     metadata:
+      namespace: {{ .Values.namespace.name }}
       labels:
         app: external-dns-{{ .Values.namespace.name }}
     spec:

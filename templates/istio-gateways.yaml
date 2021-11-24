@@ -3,6 +3,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
   name: ai-workload-istio-gateway
+  namespace: {{ .Values.namespace.name }}
 spec:
   selector:
     istio: ingressgateway # use istio default controller
@@ -17,7 +18,6 @@ spec:
       {{- end }}
       tls:
         httpsRedirect: true # sends 301 redirect for http requests
-
     - port:
         number: 443
         name: https-443
@@ -25,25 +25,14 @@ spec:
        {{- with .Values.istioGateway.servers.hosts }}
       hosts:
         {{- toYaml . | nindent 8 }}
-    {{- end }}
-      # tls:
-      #   mode: SIMPLE # enables HTTPS on this port
-      #   credentialName: bookinfo-secret # fetches certs from Kubernetes secret
-    - port:
-        number: 8888
-        name: grpc-8888
-        protocol: GRPC
-      {{- with .Values.istioGateway.servers.hosts }}
-      hosts:
-        {{- toYaml . | nindent 8 }}
       {{- end }}
-
-
+   
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: {{ include "helastic.fullname" . }}
+  name: {{ .Values.namespace.name }}
+  namespace: {{ .Values.namespace.name }}
 spec:
   {{- with .Values.istioGateway.servers.hosts }}
   hosts:
@@ -61,7 +50,7 @@ spec:
         port: 443
       route:
         - destination:
-            host: {{ .Values.fullnameOverride }}
+            host: {{ .Values.fullnameOverride }}-coord-http
             port:
               number: {{ .Values.service.port }}
       timeout: 3600s
