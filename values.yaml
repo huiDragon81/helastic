@@ -41,7 +41,7 @@ nodeSets:
   config:
     node.roles: ["master"]
     node.store.allow_mmap: false
-    xpack.security.enabled: false
+    # xpack.security.enabled: false
   volumeClaimTemplates:
   - metadata:
       name: elasticsearch-data
@@ -55,14 +55,17 @@ nodeSets:
   podTemplate:
     spec:
       initContainers:
-      - name: install-plugins
-        command: [ "sh", "-c" , "bin/elasticsearch-plugin install --batch analysis-nori repository-s3"]
+      - name: init
+        command: [ "sh", "-c"]
+        args:
+          - bin/elasticsearch-users useradd helastic -p helastic -r superuser;
+            bin/elasticsearch-plugin install --batch analysis-nori repository-s3;
 - name: data
   count: 1
   config:
     node.roles: ["data"]
     node.store.allow_mmap: false
-    xpack.security.enabled: false
+    # xpack.security.enabled: false
   volumeClaimTemplates:
   - metadata:
       name: elasticsearch-data
@@ -76,14 +79,17 @@ nodeSets:
   podTemplate:
     spec:
       initContainers:
-      - name: install-plugins
-        command: [ "sh", "-c" , "bin/elasticsearch-plugin install --batch analysis-nori repository-s3"]
+      - name: init
+        command: [ "sh", "-c"]
+        args:
+          - bin/elasticsearch-users useradd helastic -p helastic -r superuser;
+            bin/elasticsearch-plugin install --batch analysis-nori repository-s3;
 - name: coord
   count: 1
   config:
     node.roles: []
     node.store.allow_mmap: false
-    xpack.security.enabled: false
+    # xpack.security.enabled: false
   volumeClaimTemplates:
   - metadata:
       name: elasticsearch-data
@@ -97,5 +103,8 @@ nodeSets:
   podTemplate:
     spec:
       initContainers:
-      - name: install-plugins
-        command: [ "sh", "-c" , "bin/elasticsearch-plugin install --batch analysis-nori repository-s3"]
+      - name: init
+        command: [ "sh", "-c"]
+        args:
+          - bin/elasticsearch-users useradd helastic -p helastic -r superuser;
+            bin/elasticsearch-plugin install --batch analysis-nori repository-s3;
